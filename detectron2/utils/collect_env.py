@@ -151,7 +151,10 @@ def collect_env_info():
     if has_gpu:
         devices = defaultdict(list)
         for k in range(torch.cuda.device_count()):
-            cap = ".".join((str(x) for x in torch.cuda.get_device_capability(k)))
+            if _TORCH_NPU_AVAILABLE:
+                cap = ".".join((str(x) for x in (8,0)))
+            else:
+                cap = ".".join((str(x) for x in torch.cuda.get_device_capability(k)))
             name = torch.cuda.get_device_name(k) + f" (arch={cap})"
             devices[name].append(str(k))
         for name, devids in devices.items():
